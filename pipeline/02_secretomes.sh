@@ -22,14 +22,12 @@ CREATE OR REPLACE TABLE secreted_proteins AS
 SELECT
   c.*,
   sp.*  EXCLUDE(species_prefix, protein_id),
-  pr.*  EXCLUDE(species_prefix, protein_id),
   tp.*  EXCLUDE(species_prefix, protein_id),
   tm.*  EXCLUDE(species_prefix, protein_id),
   wp.*  EXCLUDE(species_prefix, protein_id)
 FROM combined_gene_species_funguild AS c
   JOIN idb.signalp   AS sp ON c.transcript_id = sp.protein_id
     AND sp.probability > 0.8
-  JOIN idb.prosite   AS pr ON c.transcript_id = pr.protein_id
   JOIN idb.targetp   AS tp ON c.transcript_id = tp.protein_id
     AND tp.prediction = 'SP'
     AND tp.cleavage_probability > 0.5
@@ -37,7 +35,10 @@ FROM combined_gene_species_funguild AS c
     AND tm.PredHel <= 1
     AND (tm.PredHel = 0 OR tm.First60 > 0)
   JOIN wolfpsort_extr AS wp ON c.transcript_id = wp.protein_id
-    AND wp.localization = 'extr';
+    AND wp.localization = 'extr'
+    -- anti‐join to drop any transcript_ids found in prosite
+  LEFT JOIN idb.prosite AS pr ON c.transcript_id = pr.protein_id
+WHERE pr.protein_id IS NULL;
 
 -- Detach the source DB
 DETACH idb;
