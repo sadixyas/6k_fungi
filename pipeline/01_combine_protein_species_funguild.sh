@@ -31,5 +31,5 @@ JOIN idb.funguild       AS f  ON s.LOCUSTAG   = f.species_prefix
 DETACH idb;
 SQL
 
-echo "✅ combined_gene_species_funguild is now in '${ODB}'."
+echo "😊 combined_gene_species_funguild is now in '${ODB}'."
 
