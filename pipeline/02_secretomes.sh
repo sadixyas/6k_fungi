@@ -36,7 +36,7 @@ FROM combined_gene_species_funguild AS c
     AND (tm.PredHel = 0 OR tm.First60 > 0)
   JOIN wolfpsort_extr AS wp ON c.transcript_id = wp.protein_id
     AND wp.localization = 'extr'
-    -- anti‐join to drop any transcript_ids found in prosite
+    -- antijoin to drop any transcript_ids found in prosite
   LEFT JOIN idb.prosite AS pr ON c.transcript_id = pr.protein_id
 WHERE pr.protein_id IS NULL;
 
